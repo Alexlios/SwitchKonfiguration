@@ -66,6 +66,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Implementation\ECS2100.cs" />
+    <Compile Include="Interfaces\ISwitch.cs" />
+    <Compile Include="Types\Connection.cs" />
+    <Compile Include="Types\IP.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

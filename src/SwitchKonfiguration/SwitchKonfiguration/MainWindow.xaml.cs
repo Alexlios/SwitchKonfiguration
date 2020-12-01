@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SwitchKonfiguration.Implementation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,12 @@ namespace SwitchKonfiguration
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void KonfigureECS2100_Click(object sender, RoutedEventArgs e)
+        {
+            ECS2100 Switch = new ECS2100(SwitchNameECS2100.Text, SwitchIPECS2100.Text, ZeitserverIPECS2100.Text, ServerIPECS2100.Text, TFTPIPECS2100.Text, OldPwdECS2100.Text, NewPwdECS2100.Text, COMPortECS2100.Text);
+            Switch.Configure();
         }
     }
 }
