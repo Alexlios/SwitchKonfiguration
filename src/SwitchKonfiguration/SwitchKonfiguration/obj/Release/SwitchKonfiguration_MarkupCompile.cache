@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfiguration\SwitchKonfiguration\obj\Debug\
+C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfiguration\SwitchKonfiguration\obj\Release\
 SwitchKonfiguration
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfiguration\SwitchKonfiguration\App.xaml
 11151548125
 
