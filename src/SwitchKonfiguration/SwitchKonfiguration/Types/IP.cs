@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace SwitchKonfiguration.Types
+﻿namespace SwitchKonfiguration.Types
 {
     public class IPv4
     {
@@ -123,6 +121,11 @@ namespace SwitchKonfiguration.Types
 
         #region PublicMethods
 
+        /// <summary>
+        /// Converts a string to an IPv4
+        /// </summary>
+        /// <param name="toConvert">The string that is to be converted</param>
+        /// <returns>if the conversion was successfull: true</returns>
         public bool SetByString(string toConvert)
         {
             _isValid = true;
@@ -130,6 +133,8 @@ namespace SwitchKonfiguration.Types
             int tmp;
             bool check;
 
+            //tries to split a string like this: "192.168.162.100" to this: "192" "168" "162" "100"
+            //then proceeds to try to fit in each block to its respective part
             foreach(string block in toConvert.Split('.'))
             {
                 if (!_isValid) break;
@@ -174,8 +179,13 @@ namespace SwitchKonfiguration.Types
             return _isValid;
         }
 
+        /// <summary>
+        /// Checks if the currently saved IPv4 is an IPv4 or not
+        /// </summary>
+        /// <returns></returns>
         public bool checkValidation()
         {
+            //reusing the properties to check
             _isValid = true;
             FirstBlock = _firstBlock;
             SecondBlock = _secondBlock;
@@ -184,6 +194,10 @@ namespace SwitchKonfiguration.Types
             return _isValid;
         }
 
+        /// <summary>
+        /// Converts the IPv4 to a string
+        /// </summary>
+        /// <returns>The converted string</returns>
         public override string ToString()
         {
             return $"{_firstBlock}.{_secondBlock}.{_thirdBlock}.{_fourthBlock}";

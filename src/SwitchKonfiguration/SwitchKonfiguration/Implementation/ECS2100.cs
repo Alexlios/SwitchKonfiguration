@@ -1,131 +1,102 @@
-﻿using SwitchKonfiguration.Interfaces;
-using SwitchKonfiguration.Types;
-using System;
-using System.IO.Ports;
+﻿using SwitchKonfiguration.Types;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace SwitchKonfiguration.Implementation
 {
-    class ECS2100 : ISwitch
+    class ECS2100
     {
-        #region PrivateFields
-
-        private string _hostname;
-        private IPv4 _switchIP;
-        private IPv4 _timeSrvIP;
-        private IPv4 _srvIP;
-        private IPv4 _tftpIP;
-        private string _oldPwd;
-        private string _newPwd;
-        private string _comPort;
-        private Connection _connection;
-        private string _updateFile = "ECS2100_V1.2.2.9.bix";
-
-        #endregion
-
-        #region Constructors
-
-        public ECS2100()
-        {
-            _hostname = string.Empty;
-            _switchIP = new IPv4();
-            _timeSrvIP = new IPv4();
-            _srvIP = new IPv4();
-            _tftpIP = new IPv4();
-            _oldPwd = string.Empty;
-            _newPwd = string.Empty;
-            _comPort = string.Empty;
-            _connection = new Connection();
-        }
-
-        public ECS2100(string hostname, string switchIP, string timeSrvIP, string srvIP, string tftpIP, string oldPwd, string newPwd, string comPort)
-        {
-            _hostname = hostname;
-            _switchIP = new IPv4(switchIP);
-            _timeSrvIP = new IPv4(timeSrvIP);
-            _srvIP = new IPv4(srvIP);
-            _tftpIP = new IPv4(tftpIP);
-            _oldPwd = oldPwd;
-            _newPwd = newPwd;
-            _comPort = comPort;
-            _connection = new Connection();
-        }
-
-        #endregion
-
         #region PublicMethods
 
-        public bool Configure()
+        /// <summary>
+        /// Configures a ECS2100 Mini-Switch
+        /// </summary>
+        /// <param name="hostname">The hostname the Switch will have</param>
+        /// <param name="switchIP">The IP the Switch will have</param>
+        /// <param name="timeSrvIP">The IP of the timeserver from which the Switch pulls its time</param>
+        /// <param name="srvIP">The IP of the Server it will be connected to</param>
+        /// <param name="tftpIP">The IP of the TFTP-Server it will load the firmware file from</param>
+        /// <param name="oldPwd">The current password of the Switch</param>
+        /// <param name="newPwd">The new password that will be given</param>
+        /// <param name="comPort">The Port on which the Switch is currently connected</param>
+        /// <returns></returns>
+        public static bool Configure(string hostname, IPv4 switchIP, IPv4 timeSrvIP, IPv4 srvIP, IPv4 tftpIP, string oldPwd, string newPwd, string comPort)
         {
-
-            if (!string.IsNullOrEmpty(_hostname) && !string.IsNullOrEmpty(_oldPwd) && !string.IsNullOrEmpty(_newPwd) && !string.IsNullOrEmpty(_comPort))
+            Connection connection = new Connection();
+            //checking if all fields are valid in theory
+            if (!string.IsNullOrEmpty(hostname) && !string.IsNullOrEmpty(oldPwd) && !string.IsNullOrEmpty(newPwd) && !string.IsNullOrEmpty(comPort))
             {
-                if (_switchIP.checkValidation() && _timeSrvIP.checkValidation() && _srvIP.checkValidation() && _tftpIP.checkValidation())
+                if (switchIP.checkValidation() && timeSrvIP.checkValidation() && srvIP.checkValidation() && tftpIP.checkValidation())
                 {
-                    if (_connection.Connect(_comPort))
+                    //beginning configuration, connecting
+                    if (connection.Connect(comPort))
                     {
-                        if (_connection.IsConnected && _connection.Login(_oldPwd))
+                        //logging in
+                        if (connection.IsConnected && connection.Login(oldPwd))
                         {
-                            if (_connection.IsConnected && _connection.Downgrade(_tftpIP, _updateFile))
+                            //resetting the switch to factory defaults
+                            if (connection.IsConnected && connection.FactoryReset())
                             {
-                                if (_connection.IsConnected && _connection.Login(_oldPwd))
+                                //logging in after reboot
+                                if (connection.IsConnected && connection.Login(oldPwd))
                                 {
-                                    if (_connection.IsConnected && _connection.FactoryReset())
+                                    //downgrading the firmware
+                                    if (connection.IsConnected && connection.Downgrade(tftpIP, "ECS2100_V1.2.2.9.bix"))
                                     {
-                                        if (_connection.IsConnected && _connection.Login(_oldPwd))
+                                        //logging in after reboot
+                                        if (connection.IsConnected && connection.Login(oldPwd))
                                         {
-                                            if (_connection.IsConnected && _connection.Configs(_switchIP, _hostname, _timeSrvIP, _srvIP, _newPwd))
+                                            //configuring the switch
+                                            if (connection.IsConnected && connection.Configs(switchIP, hostname, timeSrvIP, srvIP, newPwd))
                                             {
                                                 MessageBox.Show("Konfiguration abgeschlossen. Bitte diese nachprüfen!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
-                                                _connection.Close();
+                                                connection.Close();
                                                 return true;
                                             }
                                             else
                                             {
-                                                ShowError("Konfiguration fehlgeschlagen!");
+                                                ShowError("Konfiguration fehlgeschlagen!", connection);
                                             }
                                         }
                                         else
                                         {
-                                            ShowError("Login-Konfig fehlgeschlagen!");
+                                            ShowError("Login-Konfig fehlgeschlagen!", connection);
                                         }
                                     }
                                     else
                                     {
-                                        ShowError("Konnte nicht auf Werkeinstellungen zuücksetzen!");
+                                        ShowError("Downgrade fehlgeschlagen!", connection);
                                     }
                                 }
                                 else
                                 {
-                                    ShowError("Login-Factory fehlgeschlagen!");
+                                    ShowError("Login-Factory fehlgeschlagen!", connection);
                                 }
                             }
                             else
                             {
-                                ShowError("Downgrade fehlgeschlagen!");
+                                ShowError("Konnte nicht auf Werkeinstellungen zuücksetzen!", connection);
                             }
 
                         }
                         else
                         {
-                            ShowError("Login-Down fehlgeschlagen!");
+                            ShowError("Login-Down fehlgeschlagen!", connection);
                         }
                     }
                     else
                     {
-                        ShowError($"Konnte keine Verbindung zu Port: {_comPort} herstellen!");
+                        ShowError($"Konnte keine Verbindung zu Port: {comPort} herstellen!", connection);
                     }
 
                 }
                 else
                 {
-                    ShowError("Eine der IP-Addressen ist ungueltig!");
+                    ShowError("Eine der IP-Addressen ist ungueltig!", connection);
                 }
             }
             else
             {
-                ShowError("Eines der Felder ist leer!");
+                ShowError("Eines der Felder ist leer!", connection);
             }
 
             return false;
@@ -135,20 +106,25 @@ namespace SwitchKonfiguration.Implementation
 
         #region PrivateMethods
 
-        private void ShowError(string msg)
+        /// <summary>
+        /// Shows a Error-MessageBox
+        /// </summary>
+        /// <param name="msg">The Error message</param>
+        /// <param name="connection">The port on which it occured</param>
+        private static void ShowError(string msg, Connection connection)
         {
-            if (!string.IsNullOrEmpty(_connection.TmpError))
+            //if the port has a error message print it too, else not
+            if (!string.IsNullOrEmpty(connection.TmpError))
             {
-                MessageBox.Show($"{msg}\nError Message:\n{_connection.TmpError}", "Error",
+                MessageBox.Show($"{msg}\nError Message:\n{connection.TmpError}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
-                _connection.ErrorIsHandled();
             }
             else
             {
                 MessageBox.Show($"{msg}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            _connection.Close();
+            connection.Close();
         }
 
         #endregion
