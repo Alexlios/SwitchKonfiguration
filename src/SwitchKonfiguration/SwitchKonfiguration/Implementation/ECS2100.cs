@@ -3,6 +3,7 @@ using SwitchKonfiguration.Types;
 using System;
 using System.IO.Ports;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SwitchKonfiguration.Implementation
 {
@@ -35,6 +36,7 @@ namespace SwitchKonfiguration.Implementation
             _oldPwd = string.Empty;
             _newPwd = string.Empty;
             _comPort = string.Empty;
+            _connection = new Connection();
         }
 
         public ECS2100(string hostname, string switchIP, string timeSrvIP, string srvIP, string tftpIP, string oldPwd, string newPwd, string comPort)
@@ -47,6 +49,7 @@ namespace SwitchKonfiguration.Implementation
             _oldPwd = oldPwd;
             _newPwd = newPwd;
             _comPort = comPort;
+            _connection = new Connection();
         }
 
         #endregion
@@ -55,25 +58,28 @@ namespace SwitchKonfiguration.Implementation
 
         public bool Configure()
         {
+
             if (!string.IsNullOrEmpty(_hostname) && !string.IsNullOrEmpty(_oldPwd) && !string.IsNullOrEmpty(_newPwd) && !string.IsNullOrEmpty(_comPort))
             {
                 if (_switchIP.checkValidation() && _timeSrvIP.checkValidation() && _srvIP.checkValidation() && _tftpIP.checkValidation())
                 {
                     if (_connection.Connect(_comPort))
                     {
-                        if (_connection.Login(_oldPwd))
+                        if (_connection.IsConnected && _connection.Login(_oldPwd))
                         {
-                            if (_connection.Downgrade(_tftpIP, _updateFile))
+                            if (_connection.IsConnected && _connection.Downgrade(_tftpIP, _updateFile))
                             {
-                                if (_connection.Login(_oldPwd))
+                                if (_connection.IsConnected && _connection.Login(_oldPwd))
                                 {
-                                    if (_connection.FactoryReset())
+                                    if (_connection.IsConnected && _connection.FactoryReset())
                                     {
-                                        if (_connection.Login(_oldPwd))
+                                        if (_connection.IsConnected && _connection.Login(_oldPwd))
                                         {
-                                            if (_connection.Configs(_switchIP, _hostname, _timeSrvIP, _srvIP, _newPwd))
+                                            if (_connection.IsConnected && _connection.Configs(_switchIP, _hostname, _timeSrvIP, _srvIP, _newPwd))
                                             {
-
+                                                MessageBox.Show("Konfiguration abgeschlossen. Bitte diese nachprüfen!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
+                                                _connection.Close();
+                                                return true;
                                             }
                                             else
                                             {
@@ -82,7 +88,7 @@ namespace SwitchKonfiguration.Implementation
                                         }
                                         else
                                         {
-                                            ShowError("Login fehlgeschlagen!");
+                                            ShowError("Login-Konfig fehlgeschlagen!");
                                         }
                                     }
                                     else
@@ -92,17 +98,18 @@ namespace SwitchKonfiguration.Implementation
                                 }
                                 else
                                 {
-                                    ShowError("Login fehlgeschlagen!");
+                                    ShowError("Login-Factory fehlgeschlagen!");
                                 }
                             }
                             else
                             {
                                 ShowError("Downgrade fehlgeschlagen!");
                             }
+
                         }
                         else
                         {
-                            ShowError("Login fehlgeschlagen!");
+                            ShowError("Login-Down fehlgeschlagen!");
                         }
                     }
                     else
@@ -121,9 +128,6 @@ namespace SwitchKonfiguration.Implementation
                 ShowError("Eines der Felder ist leer!");
             }
 
-
-
-
             return false;
         }
 
@@ -133,7 +137,18 @@ namespace SwitchKonfiguration.Implementation
 
         private void ShowError(string msg)
         {
-            MessageBox.Show($"{msg}\nError Message:\n{_connection.TmpError}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (!string.IsNullOrEmpty(_connection.TmpError))
+            {
+                MessageBox.Show($"{msg}\nError Message:\n{_connection.TmpError}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                _connection.ErrorIsHandled();
+            }
+            else
+            {
+                MessageBox.Show($"{msg}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            _connection.Close();
         }
 
         #endregion

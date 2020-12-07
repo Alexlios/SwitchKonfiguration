@@ -26,49 +26,50 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+
         <StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
             <Label FontSize="18" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,0,5" Width="170">Switch Konfigurator</Label>
             <Label FontSize="12" Foreground="OrangeRed" HorizontalAlignment="Left" Height="25" Margin="0,18,0,10">ECS2100-10T</Label>
         </StackPanel>
-        
+
         <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="95">SwitchName:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="135" Height="22" TextAlignment="Center" Name="SwitchNameECS2100"></TextBox>
+            <Label Width="95">SwitchName:</Label>
+            <TextBox Width="135" Name="SwitchNameECS2100" Text="eua997k03"></TextBox>
         </StackPanel>
-        
+
         <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" >
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="70">SwitchIP:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="160" Height="22" TextAlignment="Center" Name="SwitchIPECS2100"></TextBox>
+            <Label Width="70">SwitchIP:</Label>
+            <TextBox Width="160" Name="SwitchIPECS2100" Text="192.168.162.90"></TextBox>
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" >
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="90">ZeitserverIP:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="140" Height="22" TextAlignment="Center" Name="ZeitserverIPECS2100"></TextBox>
+            <Label Width="90">ZeitserverIP:</Label>
+            <TextBox Width="140" Name="ZeitserverIPECS2100" Text="192.168.162.146"></TextBox>
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" >
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="70">ServerIP:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="160" Height="22" TextAlignment="Center" Name="ServerIPECS2100"></TextBox>
+            <Label Width="70">ServerIP:</Label>
+            <TextBox Width="160" Name="ServerIPECS2100" Text="192.168.162.2"></TextBox>
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" >
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="110">Altes Passwort:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="120" Height="22" TextAlignment="Center" Name="OldPwdECS2100"></TextBox>
+            <Label Width="110">Altes Passwort:</Label>
+            <TextBox Width="120" Name="OldPwdECS2100" Text="admin"></TextBox>
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" >
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="120">Neues Passwort:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="110" Height="22" TextAlignment="Center" Name="NewPwdECS2100"></TextBox>
+            <Label Width="120">Neues Passwort:</Label>
+            <TextBox Width="110" Name="NewPwdECS2100" Text="XC997ac"></TextBox>
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" >
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="80">COM Port:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="150" Height="22" TextAlignment="Center" Name="COMPortECS2100">COM3</TextBox>
+            <Label Width="80">COM Port:</Label>
+            <TextBox Width="150" Name="COMPortECS2100">COM3</TextBox>
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" >
-            <Label FontSize="15" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,5,5,5" Width="65">TFTP IP:</Label>
-            <TextBox FontSize="15" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5" Width="165" Height="22" TextAlignment="Center" Name="TFTPIPECS2100"></TextBox>
+            <Label Width="65">TFTP IP:</Label>
+            <TextBox Width="165" Name="TFTPIPECS2100" Text="192.168.2.110"></TextBox>
         </StackPanel>
 
         <Button Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" Width="200" Height="25" Name="KonfigureECS2100" Click="KonfigureECS2100_Click">

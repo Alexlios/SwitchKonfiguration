@@ -28,3 +28,4 @@ C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfigu
 C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfiguration\SwitchKonfiguration\obj\Debug\SwitchKonfiguration.csproj.CoreCompileInputs.cache
 C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfiguration\SwitchKonfiguration\obj\Debug\SwitchKonfiguration.exe
 C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfiguration\SwitchKonfiguration\obj\Debug\SwitchKonfiguration.pdb
+C:\Users\Alexander.Schoenberg\source\repos\SwitchKonfiguration\src\SwitchKonfiguration\SwitchKonfiguration\obj\Debug\App.baml

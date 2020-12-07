@@ -1,4 +1,6 @@
-﻿namespace SwitchKonfiguration.Types
+﻿using System.Windows;
+
+namespace SwitchKonfiguration.Types
 {
     public class IPv4
     {
@@ -145,22 +147,27 @@
                 {
                     case 0:
                         FirstBlock = tmp;
+                        count++;
                         break;
 
                     case 1:
                         SecondBlock = tmp;
+                        count++;
                         break;
 
                     case 2:
                         ThirdBlock = tmp;
+                        count++;
                         break;
 
                     case 3:
                         FourthBlock = tmp;
+                        count++;
                         break;
 
                     default:
                         _isValid = false;
+                        count++;
                         break;
                 }
             }

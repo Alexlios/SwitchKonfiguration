@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace SwitchKonfiguration.Interfaces
 {
-    interface ISwitch
+    public interface ISwitch
     {
-        
+        bool Configure();
     }
 }
