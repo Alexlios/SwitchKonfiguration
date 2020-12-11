@@ -7,6 +7,9 @@ namespace SwitchKonfiguration.Implementation
     {
         #region PublicMethods
 
+        public static Connection connection;
+
+
         /// <summary>
         /// Configures a ECS2100 Mini-Switch
         /// </summary>
@@ -21,7 +24,8 @@ namespace SwitchKonfiguration.Implementation
         /// <returns></returns>
         public static bool Configure(string hostname, IPv4 switchIP, IPv4 timeSrvIP, IPv4 srvIP, IPv4 tftpIP, string oldPwd, string newPwd, string comPort)
         {
-            Connection connection = new Connection();
+            connection = new Connection();
+
             //checking if all fields are valid in theory
             if (!string.IsNullOrEmpty(hostname) && !string.IsNullOrEmpty(oldPwd) && !string.IsNullOrEmpty(newPwd) && !string.IsNullOrEmpty(comPort))
             {
@@ -37,11 +41,11 @@ namespace SwitchKonfiguration.Implementation
                             if (connection.IsConnected && connection.FactoryReset())
                             {
                                 //logging in after reboot
-                                if (connection.IsConnected && connection.Login(oldPwd))
-                                {
+                            //    if (connection.IsConnected && connection.Login(oldPwd))
+                            //    {
                                     //downgrading the firmware
-                                    if (connection.IsConnected && connection.Downgrade(tftpIP, "ECS2100_V1.2.2.9.bix"))
-                                    {
+                            //        if (connection.IsConnected && connection.Downgrade(tftpIP, "ECS2100_V1.2.2.9.bix"))
+                            //        {
                                         //logging in after reboot
                                         if (connection.IsConnected && connection.Login(oldPwd))
                                         {
@@ -61,16 +65,16 @@ namespace SwitchKonfiguration.Implementation
                                         {
                                             ShowError("Login-Konfig fehlgeschlagen!", connection);
                                         }
-                                    }
-                                    else
-                                    {
-                                        ShowError("Downgrade fehlgeschlagen!", connection);
-                                    }
-                                }
-                                else
-                                {
-                                    ShowError("Login-Factory fehlgeschlagen!", connection);
-                                }
+                            //        }
+                            //        else
+                            //        {
+                            //            ShowError("Downgrade fehlgeschlagen!", connection);
+                            //        }
+                            //    }
+                            //    else
+                            //    {
+                            //        ShowError("Login-Factory fehlgeschlagen!", connection);
+                            //    }
                             }
                             else
                             {
@@ -114,7 +118,7 @@ namespace SwitchKonfiguration.Implementation
         private static void ShowError(string msg, Connection connection)
         {
             //if the port has a error message print it too, else not
-            if (!string.IsNullOrEmpty(connection.TmpError))
+            if (connection != null && !string.IsNullOrEmpty(connection.TmpError))
             {
                 MessageBox.Show($"{msg}\nError Message:\n{connection.TmpError}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);

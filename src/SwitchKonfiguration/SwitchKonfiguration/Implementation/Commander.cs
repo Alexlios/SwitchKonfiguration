@@ -1,5 +1,6 @@
 ﻿using SwitchKonfiguration.Types;
 using System;
+using System.IO;
 using System.IO.Ports;
 using System.Threading;
 
@@ -33,6 +34,13 @@ namespace SwitchKonfiguration.Implementation
         #endregion
 
         #region Constructors
+        public Commander()
+        {
+            canSend = false;
+            _output = null;
+            _tmpError = string.Empty;
+        }
+
 
         /// <summary>
         /// Initializes a Commander object
@@ -82,6 +90,7 @@ namespace SwitchKonfiguration.Implementation
             if (!ExecuteCommand("boot system config:Factory_Default_Config.cfg")) return false;
             if (!ExecuteCommand("end")) return false;
             if (!ExecuteCommand("delete file name startup1.cfg")) return false;
+            canSend = true;
 
             return true;
 
@@ -108,17 +117,19 @@ namespace SwitchKonfiguration.Implementation
             if (!ExecuteCommand("no ip http server")) return false;
             if (!ExecuteCommand("no ip http secure-server")) return false;
             if (!ExecuteCommand("no ip telnet server")) return false;
-            if (!ExecuteCommand("no ip mdns")) return false;
-            if (!ExecuteCommand("no ip domain-lookup")) return false;
+            //if (!ExecuteCommand("no ip mdns")) return false;
+            //if (!ExecuteCommand("no ip domain-lookup")) return false;
             if (!ExecuteCommand("end")) return false;
             if (!ExecuteCommand("ip ssh crypto host-key generate dsa")) return false;
+            Wait(120);
             if (!ExecuteCommand("ip ssh crypto host-key generate rsa")) return false;
+            Wait(120);
             if (!ExecuteCommand("ip ssh save host-key")) return false;
             if (!ExecuteCommand("config")) return false;
             if (!ExecuteCommand("ip ssh server")) return false;
             if (!ExecuteCommand("no lldp")) return false;
             if (!ExecuteCommand("web-auth system-auth-control")) return false;
-            if (!ExecuteCommand("web-auth session-timeout 600")) return false;
+            //if (!ExecuteCommand("web-auth session-timeout 600")) return false;
             if (!ExecuteCommand($"sntp server {timeSrvIP}")) return false;
             if (!ExecuteCommand("sntp poll 3600")) return false;
             if (!ExecuteCommand("sntp client")) return false;
@@ -136,22 +147,22 @@ namespace SwitchKonfiguration.Implementation
             if (!ExecuteCommand("no logging sendmail")) return false;
             if (!ExecuteCommand("interface vlan 1")) return false;
             if (!ExecuteCommand("no ipv6 enable")) return false;
-            if (!ExecuteCommand("no ip proxy-arp")) return false;
-            if (!ExecuteCommand("no ip dhcp relay server")) return false;
+            //if (!ExecuteCommand("no ip proxy-arp")) return false;
+            //if (!ExecuteCommand("no ip dhcp relay server")) return false;
             if (!ExecuteCommand("end")) return false;
             if (!ExecuteCommand("config")) return false;
             if (!ExecuteCommand($"username guest password 0 {newPwd}")) return false;
             if (!ExecuteCommand($"username admin password 0 {newPwd}")) return false;
             if (!ExecuteCommand("jumbo frame")) return false;
             if (!ExecuteCommand("no spanning-tree")) return false;
-            if (!ExecuteCommand("dos-protection echo-chargen")) return false;
-            if (!ExecuteCommand("dos-protection smurf")) return false;
-            if (!ExecuteCommand("dos-protection tcp-flooding")) return false;
-            if (!ExecuteCommand("dos-protection tcp-null-scan")) return false;
-            if (!ExecuteCommand("dos-protection tcp-syn-fin-scan")) return false;
-            if (!ExecuteCommand("dos-protection tcp-xmas-scan")) return false;
-            if (!ExecuteCommand("dos-protection win-nuke")) return false;
-            if (!ExecuteCommand("no dos-protection udp-flooding")) return false;
+            //if (!ExecuteCommand("dos-protection echo-chargen")) return false;
+            //if (!ExecuteCommand("dos-protection smurf")) return false;
+            //if (!ExecuteCommand("dos-protection tcp-flooding")) return false;
+            //if (!ExecuteCommand("dos-protection tcp-null-scan")) return false;
+            //if (!ExecuteCommand("dos-protection tcp-syn-fin-scan")) return false;
+            //if (!ExecuteCommand("dos-protection tcp-xmas-scan")) return false;
+            //if (!ExecuteCommand("dos-protection win-nuke")) return false;
+            //if (!ExecuteCommand("no dos-protection udp-flooding")) return false;
             if (!ExecuteCommand("end")) return false;
             if (!ExecuteCommand("copy running-config startup-config")) return false;
             if (!ExecuteCommand("")) return false;
@@ -159,6 +170,15 @@ namespace SwitchKonfiguration.Implementation
             if (!ExecuteCommand("y")) return false;
 
             return true;
+        }
+
+        public bool Wait(int MaxSeconds)
+        {
+            for(int i = MaxSeconds;i >= 0 && !canSend;--i)
+            {
+                Thread.Sleep(1000);
+            }
+            return canSend;
         }
 
         /// <summary>
@@ -186,6 +206,7 @@ namespace SwitchKonfiguration.Implementation
                 if (canSend)
                 {
                     _output.WriteLine(command);
+                    File.AppendAllText("C:\\Users\\Alexander.Schoenberg\\Desktop\\Ausgabe.txt", "<" + command + ">");
                     canSend = false;
                 }
                 else

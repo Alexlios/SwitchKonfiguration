@@ -76,5 +76,6 @@
             ECS2100-10T konfigurieren
         </Button>
         <DataGrid x:Name="ExcelView" Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="8" AllowDrop="True" Drop="ExcelView_Drop"/>
+        
     </Grid>
 </Window>

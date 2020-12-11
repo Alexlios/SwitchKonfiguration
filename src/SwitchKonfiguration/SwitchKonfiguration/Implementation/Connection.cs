@@ -1,5 +1,6 @@
 ﻿using SwitchKonfiguration.Types;
 using System;
+using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows;
@@ -37,6 +38,27 @@ namespace SwitchKonfiguration.Implementation
         }
 
         #endregion
+
+
+
+
+
+        public Connection()
+        {
+            _serialPort = null;
+            _commander = new Commander();
+            _password = string.Empty;
+            _loggedIn = false;
+            _port = string.Empty;
+        }
+
+
+
+
+
+
+
+
 
         #region PublicMethods
 
@@ -97,6 +119,7 @@ namespace SwitchKonfiguration.Implementation
             for (int i = 60; i > 0; --i)
             {
                 Thread.Sleep(1000);
+                if (_loggedIn == true) break;
             }
             return _loggedIn;
         }
@@ -152,24 +175,18 @@ namespace SwitchKonfiguration.Implementation
         /// <returns>if it succeeded (true) or not (false)</returns>
         public bool Reboot()
         {
-            //removes the EventHandler so it doesnt break out of the routine
-            _serialPort.DataReceived -= _serialPort_DataReceived;
+            
             
             //executes the commands to reboot
-            _commander.canSend = true;
-            if (!_commander.ExecuteCommand("reload")) return false;
-            _commander.canSend = true;
-            if (!_commander.ExecuteCommand("y")) return false;
-            
+            if (!_commander.ExecuteCommand("reload",60)) return false;
+            if (!_commander.ExecuteCommand("y",30)) return false;
+
             //waits for the switch to boot again
             Thread.Sleep(5000);
             _loggedIn = false;
             _commander.canSend = false;
-            Close();
-            Thread.Sleep(120000);
 
-            //re-establishes the connection
-            Connect(_port);
+            _commander.Wait(120);
 
             //if canSend is false => Switch didnt send Data yet
             if (!_commander.canSend)
@@ -181,7 +198,7 @@ namespace SwitchKonfiguration.Implementation
                     //if canSend is still false wait a bit and try a second and last time
                     if (!_commander.canSend)
                     {
-                        Thread.Sleep(60000);
+                        _commander.Wait(60);
                         _commander.canSend = true;
                         if (!_commander.ExecuteCommand("")) return false;
                     }
@@ -214,6 +231,8 @@ namespace SwitchKonfiguration.Implementation
 
             //get the data that was send
             receivedData = receiver.ReadExisting();
+
+            File.AppendAllText("C:\\Users\\Alexander.Schoenberg\\Desktop\\Ausgabe.txt", receivedData);
 
             //if the data contains a "error" show an error
             if (receivedData.Contains("Error"))
@@ -248,7 +267,7 @@ namespace SwitchKonfiguration.Implementation
                     }
                     else
                     {
-                        if (receivedData.Contains("Press ENTER to start session"))
+                        if (receivedData.Contains("Press ENTER to start session") || receivedData.Contains("WARNING - MONITORED ACTIONS AND ACCESSES"))
                         {
                             _commander.canSend = true;
                             _commander.ExecuteCommand("");
@@ -267,7 +286,7 @@ namespace SwitchKonfiguration.Implementation
         /// </summary>
         private void Error()
         {
-            Close();
+            //Close();
             MessageBox.Show("An Error occured!", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
         }
